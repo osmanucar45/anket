@@ -305,7 +305,7 @@
 
     // Oy kaydet
     function saveVote(code, tshirtColor, tshirtModel, pantColor) {
-  fetch('https://SENIN-BACKEND-LINKIN.onrender.com/vote', {
+  fetch('https://anket-a.onrender.com/vote', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ code, tshirtColor, tshirtModel, pantColor })
