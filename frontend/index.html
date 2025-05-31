@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Okul Kıyafetimi Seçiyorum</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #f0f4f8, #d9e2ec);
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #2c3e50;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.5rem;
+    }
+    nav {
+      background-color: #34495e;
+      display: flex;
+      justify-content: center;
+      padding: 0.5rem;
+      gap: 1rem;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    .container {
+      max-width: 900px;
+      margin: 2rem auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      padding: 2rem;
+    }
+    .submit-btn {
+      margin-top: 2rem;
+      background-color: #2980b9;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .question {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+    .color-options input {
+      display: none;
+    }
+    .color-options label {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      margin-right: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      border: 1px solid #ccc;
+    }
+    .color-options label.white { background: white; }
+    .color-options label.black { background: black; }
+    .color-options label.blue { background: blue; }
+    .color-options label.red { background: red; }
+    .color-options label.green { background: green; }
+    .color-options label.orange { background: orange; }
+    .color-options label.yellow { background: yellow; }
+    .color-options label.gray { background: gray; }
+    .clipart-options img {
+      width: 100px;
+      margin-right: 20px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      border-radius: 5px;
+    }
+    .clipart-options input:checked + label img {
+      border-color: #2980b9;
+    }
+    canvas {
+      max-width: 100%;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+    th, td {
+      padding: 0.75rem;
+      text-align: center;
+    }
+    #codeListContainer {
+      margin-top: 2rem;
+      background: #f9f9f9;
+      padding: 1rem;
+      border-radius: 5px;
+    }
+    #codeList {
+      width: 100%;
+      height: 200px;
+    }
+    #logoutBtn {
+      background: #c0392b;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      float: right;
+    }
+  </style>
+</head>
+<body>
+
+<header>Okul Kıyafetimi Seçiyorum</header>
+<nav>
+  <a id="navHome">Anasayfa</a>
+  <a id="navResults">Sonuçlar</a>
+  <a id="navLogin">Giriş</a>
+  <button id="logoutBtn" style="display:none;">Çıkış Yap</button>
+</nav>
+
+<!-- Anket formu -->
+<div class="container" id="surveyContainer" style="display:none;">
+  <form id="surveyForm">
+    <div class="section">
+      <div class="question">1. Tişört Rengi:</div>
+      <div class="color-options">
+        <input type="radio" name="tshirtColor" id="white" value="Beyaz" />
+        <label for="white" class="white"></label>
+        <input type="radio" name="tshirtColor" id="black" value="Siyah" />
+        <label for="black" class="black"></label>
+        <input type="radio" name="tshirtColor" id="blue" value="Mavi" />
+        <label for="blue" class="blue"></label>
+        <input type="radio" name="tshirtColor" id="red" value="Kırmızı" />
+        <label for="red" class="red"></label>
+        <input type="radio" name="tshirtColor" id="green" value="Yeşil" />
+        <label for="green" class="green"></label>
+        <input type="radio" name="tshirtColor" id="orange" value="Turuncu" />
+        <label for="orange" class="orange"></label>
+        <input type="radio" name="tshirtColor" id="yellow" value="Sarı" />
+        <label for="yellow" class="yellow"></label>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="question">2. Tişört Modeli:</div>
+      <div class="clipart-options">
+        <input type="radio" name="tshirtModel" id="bisiklet" value="Bisiklet Yaka" />
+        <label for="bisiklet"><img src="images/bisiklet.png" alt="Bisiklet Yaka" /></label>
+        <input type="radio" name="tshirtModel" id="polo" value="Polo Yaka" />
+        <label for="polo"><img src="images/polo.png" alt="Polo Yaka" /></label>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="question">3. Pantolon Rengi:</div>
+      <div class="color-options">
+        <input type="radio" name="pantColor" id="pantBlack" value="Siyah" />
+        <label for="pantBlack" class="black"></label>
+        <input type="radio" name="pantColor" id="pantGray" value="Gri" />
+        <label for="pantGray" class="gray"></label>
+        <input type="radio" name="pantColor" id="pantFume" value="Füme" />
+        <label for="pantFume" class="gray"></label>
+      </div>
+    </div>
+
+    <button type="submit" class="submit-btn">Oy Ver</button>
+  </form>
+</div>
+
+<!-- Giriş ekranı -->
+<div class="container" id="loginContainer" style="display:none;">
+  <h2>Tek Kullanımlık Kod ile Giriş Yap</h2>
+  <input type="text" id="accessCode" placeholder="Kodunuzu girin" />
+  <button class="submit-btn" onclick="loginWithCode()">Giriş Yap</button>
+</div>
+
+<!-- Sonuçlar ekranı (herkese açık) -->
+<div class="container" id="resultsContainer">
+  <h2>Oylama Sonuçları</h2>
+  <canvas id="resultChart"></canvas>
+  <table>
+    <thead>
+      <tr><th>Tişört Rengi</th><th>Tişört Modeli</th><th>Pantolon Rengi</th><th>Oy Sayısı</th></tr>
+    </thead>
+    <tbody id="resultTable"></tbody>
+  </table>
+</div>
+
+<!-- Yöneticiye özel kod listesi -->
+<div class="container" id="codeListContainer" style="display:none;">
+  <h3>Tek Kullanımlık Kod Listesi</h3>
+  <textarea id="codeList" readonly></textarea>
+  <div class="download-link">
+    <a href="#" onclick="downloadCodes()">Kodları Dışa Aktar</a>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const adminCode = "ADMIN45";
+  const codes = {};
+  const USER_CODE_KEY = "okulKiyafetUserCode";
+  let results = {};
+  let currentUserCode = null;
+
+  // 600 adet rastgele tek kullanımlık kod oluştur ve false (kullanılmadı) olarak işaretle
+  let codeListText = "";
+  for (let i = 0; i < 600; i++) {
+    let c = generateCode();
+    codes[c] = false;
+    codeListText += c + "\n";
+  }
+
+  // Kodları textarea'ya koy
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("codeList").value = codeListText.trim();
+  });
+
+  // Kod üretici (örnek: 6 haneli harf+rakamlardan)
+  function generateCode() {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let result = "";
+    for (let i = 0; i < 6; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+  }
+
+  // Giriş kontrolü ve ana ekran yönetimi
+  function checkLogin() {
+    currentUserCode = localStorage.getItem(USER_CODE_KEY);
+    if(currentUserCode) {
+      if(currentUserCode === adminCode) {
+        showSurvey(false); // admin oy veremez, sadece anket gizli
+        document.getElementById("codeListContainer").style.display = "block";
+        document.getElementById("logoutBtn").style.display = "inline-block";
+        document.getElementById("loginContainer").style.display = "none";
+        document.getElementById("surveyContainer").style.display = "none";
+      } else if(codes.hasOwnProperty(currentUserCode)) {
+        if(codes[currentUserCode] === true) {
+          alert("Bu kod zaten kullanıldı, oy kullanamazsınız.");
+          showSurvey(false);
+        } else {
+          showSurvey(true);
+        }
+        document.getElementById("codeListContainer").style.display = "none";
+        document.getElementById("logoutBtn").style.display = "inline-block";
+        document.getElementById("loginContainer").style.display = "none";
+      } else {
+        // Geçersiz kodsa çıkış yap
+        logout();
+      }
+    } else {
+      // Giriş yok, oy formunu gizle, sonuçları göster (sonuçlar anasayfada)
+      showSurvey(false);
+      document.getElementById("codeListContainer").style.display = "none";
+      document.getElementById("logoutBtn").style.display = "none";
+      document.getElementById("loginContainer").style.display = "block";
+      document.getElementById("surveyContainer").style.display = "none";
+    }
+  }
+
+  // Oy verme formunu göster/gizle (göster = true)
+  function showSurvey(show) {
+    if(show) {
+      document.getElementById("surveyContainer").style.display = "block";
+      document.getElementById("loginContainer").style.display = "none";
+    } else {
+      document.getElementById("surveyContainer").style.display = "none";
+      // loginContainer burada sonuçları gösteren alanla değiştirilmiyor
+    }
+  }
+
+  // Oy kullan
+  document.getElementById("surveyForm").addEventListener("submit", e => {
+    e.preventDefault();
+
+    if(!currentUserCode || currentUserCode === adminCode) {
+      alert("Oy kullanmak için lütfen geçerli bir kullanıcı kodu ile giriş yapın.");
+      return;
+    }
+
+    const tshirtColor = document.querySelector('input[name="tshirtColor"]:checked');
+    const tshirtModel = document.querySelector('input[name="tshirtModel"]:checked');
+    const pantColor = document.querySelector('input[name="pantColor"]:checked');
+
+    if(!tshirtColor || !tshirtModel || !pantColor) {
+      alert("Lütfen tüm alanları seçin.");
+      return;
+    }
+
+    // Oy kaydet
+    function saveVote(code, tshirtColor, tshirtModel, pantColor) {
+  fetch('https://SENIN-BACKEND-LINKIN.onrender.com/vote', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code, tshirtColor, tshirtModel, pantColor })
+  }).then(response => {
+    if (!response.ok) throw new Error("Kod zaten kullanılmış.");
+    return response.json();
+  }).then(() => {
+    alert("Oy kaydedildi!");
+    localStorage.setItem("okulKiyafetUserCode", code);
+    showSurvey(false);
+    updateResults();
+  }).catch(err => alert(err.message));
+}
+
+  });
+
+  // Oyları localStorage'da sakla
+  function saveVote(code, tshirtColor, tshirtModel, pantColor) {
+    let votes = JSON.parse(localStorage.getItem("okulKiyafetVotes") || "{}");
+    votes[code] = { tshirtColor, tshirtModel, pantColor };
+    localStorage.setItem("okulKiyafetVotes", JSON.stringify(votes));
+  }
+
+  // Sonuçları güncelle ve göster
+  function updateResults() {
+  fetch('https://SENIN-BACKEND-LINKIN.onrender.com/results')
+    .then(res => res.json())
+    .then(votes => {
+      // votes verilerini tablo ve grafik için işle
+    });
+}
+
+
+    // Tabloyu doldur
+    const tbody = document.getElementById("resultTable");
+    tbody.innerHTML = "";
+
+    for(let key in resultCount) {
+      let [tshirtColor, tshirtModel, pantColor] = key.split(" | ");
+      let count = resultCount[key];
+      let tr = document.createElement("tr");
+      tr.innerHTML = `<td>${tshirtColor}</td><td>${tshirtModel}</td><td>${pantColor}</td><td>${count}</td>`;
+      tbody.appendChild(tr);
+    }
+
+    updateChart(resultCount);
+  }
+
+  // Grafik güncelle
+  let chart = null;
+  function updateChart(data) {
+    const labels = Object.keys(data);
+    const counts = Object.values(data);
+
+    const ctx = document.getElementById("resultChart").getContext("2d");
+
+    if(chart) chart.destroy();
+
+    chart = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels,
+        datasets: [{
+          label: "Oy Sayısı",
+          data: counts,
+          backgroundColor: "rgba(41, 128, 185, 0.7)",
+          borderColor: "rgba(41, 128, 185, 1)",
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            precision: 0
+          }
+        },
+        plugins: {
+          legend: { display: false }
+        }
+      }
+    });
+  }
+
+  // Giriş işlemi
+  function loginWithCode() {
+    const inputCode = document.getElementById("accessCode").value.trim().toUpperCase();
+
+    if(!inputCode) {
+      alert("Lütfen kodunuzu girin.");
+      return;
+    }
+
+    if(inputCode === adminCode) {
+      alert("Yönetici girişi başarılı.");
+      localStorage.setItem(USER_CODE_KEY, inputCode);
+      currentUserCode = inputCode;
+      document.getElementById("codeListContainer").style.display = "block";
+      document.getElementById("logoutBtn").style.display = "inline-block";
+      document.getElementById("loginContainer").style.display = "none";
+      document.getElementById("surveyContainer").style.display = "none";
+      return;
+    }
+
+    if(codes.hasOwnProperty(inputCode)) {
+      if(codes[inputCode] === true) {
+        alert("Bu kod zaten kullanıldı.");
+        return;
+      }
+      localStorage.setItem(USER_CODE_KEY, inputCode);
+      currentUserCode = inputCode;
+      showSurvey(true);
+      document.getElementById("codeListContainer").style.display = "none";
+      document.getElementById("logoutBtn").style.display = "inline-block";
+      document.getElementById("loginContainer").style.display = "none";
+    } else {
+      alert("Geçersiz kod.");
+    }
+  }
+
+  // Çıkış yap
+  document.getElementById("logoutBtn").addEventListener("click", logout);
+  function logout() {
+    localStorage.removeItem(USER_CODE_KEY);
+    currentUserCode = null;
+    document.getElementById("codeListContainer").style.display = "none";
+    document.getElementById("logoutBtn").style.display = "none";
+    document.getElementById("loginContainer").style.display = "block";
+    showSurvey(false);
+  }
+
+  // Nav butonları işlevleri
+  document.getElementById("navHome").addEventListener("click", () => {
+    if(currentUserCode === adminCode) {
+      document.getElementById("codeListContainer").style.display = "block";
+      document.getElementById("surveyContainer").style.display = "none";
+      document.getElementById("loginContainer").style.display = "none";
+      document.getElementById("resultsContainer").style.display = "block";
+    } else if(currentUserCode) {
+      showSurvey(true);
+      document.getElementById("codeListContainer").style.display = "none";
+      document.getElementById("loginContainer").style.display = "none";
+      document.getElementById("resultsContainer").style.display = "block";
+    } else {
+      showSurvey(false);
+      document.getElementById("codeListContainer").style.display = "none";
+      document.getElementById("loginContainer").style.display = "block";
+      document.getElementById("resultsContainer").style.display = "block";
+    }
+  });
+
+  document.getElementById("navResults").addEventListener("click", () => {
+    document.getElementById("resultsContainer").style.display = "block";
+    document.getElementById("surveyContainer").style.display = "none";
+    document.getElementById("loginContainer").style.display = "none";
+    document.getElementById("codeListContainer").style.display = "none";
+  });
+
+  document.getElementById("navLogin").addEventListener("click", () => {
+    if(currentUserCode) {
+      alert("Zaten giriş yapılmış.");
+      return;
+    }
+    document.getElementById("loginContainer").style.display = "block";
+    document.getElementById("surveyContainer").style.display = "none";
+    document.getElementById("resultsContainer").style.display = "none";
+    document.getElementById("codeListContainer").style.display = "none";
+  });
+
+  // Kod listesini dışa aktarma
+  function downloadCodes() {
+    const blob = new Blob([codeListText], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "kodlar.txt";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  window.onload = () => {
+    updateResults(); // Sayfa yüklendiğinde sonuçları göster
+    checkLogin();
+  };
+</script>
+
+</body>
+</html>
