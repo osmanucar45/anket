@@ -1,37 +1,32 @@
-const express = require("express");
-const cors = require("cors");
-const bodyParser = require("body-parser");
-const { MongoClient } = require("mongodb");
-require("dotenv").config();
+const express = require('express');
+const mongoose = require('mongoose');
+const Vote = require('./models/Vote');
+const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
 app.use(cors());
-app.use(bodyParser.json());
-app.use(express.static("."));
+app.use(express.json());
 
-const uri = process.env.MONGO_URI;
-const client = new MongoClient(uri);
-const dbName = "anketDB";
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
-app.post("/kontrol", async (req, res) => {
-  await client.connect();
-  const db = client.db(dbName).collection("oylar");
-  const veri = await db.findOne({ tc: req.body.tc });
-  res.json({ varMi: veri ? true : false });
+// Oy kaydet
+app.post('/vote', async (req, res) => {
+  const { code, tshirtColor, tshirtModel, pantColor } = req.body;
+  const existing = await Vote.findOne({ code });
+  if (existing) return res.status(400).json({ error: "Kod kullanılmış." });
+
+  const vote = new Vote({ code, tshirtColor, tshirtModel, pantColor });
+  await vote.save();
+  res.json({ success: true });
 });
 
-app.post("/oyver", async (req, res) => {
-  await client.connect();
-  const db = client.db(dbName).collection("oylar");
-  await db.insertOne(req.body);
-  res.json({ ok: true });
+// Sonuçları getir
+app.get('/results', async (req, res) => {
+  const votes = await Vote.find();
+  res.json(votes);
 });
 
-app.get("/sonuclar", async (req, res) => {
-  await client.connect();
-  const db = client.db(dbName).collection("oylar");
-  const sonuc = await db.find().toArray();
-  res.json(sonuc);
-});
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 
-app.listen(3000, () => console.log("Sunucu çalışıyor..."));
