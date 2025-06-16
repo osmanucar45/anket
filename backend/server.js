@@ -1,68 +1,67 @@
-const express = require("express");
-const cors = require("cors");
-const { MongoClient } = require("mongodb");
-
+const express = require('express');
+const { MongoClient } = require('mongodb');
+const cors = require('cors');
 const app = express();
-const port = process.env.PORT || 10000;
-
 app.use(cors());
 app.use(express.json());
 
-const uri = "mongodb+srv://admin:anket123@cluster0.jex5juo.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const uri = "mongodb+srv://admin:<ANKET_ŞİFREN>@cluster0.jex5juo.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"; // Şifreyi yerleştir
 const client = new MongoClient(uri);
 
-let codesCollection;
-let oylarCollection;
-
-async function connectToDB() {
+app.post('/api/kod-kontrol', async (req, res) => {
+  const { code } = req.body;
   try {
     await client.connect();
     const db = client.db("anketDB");
-    codesCollection = db.collection("codes");
-    oylarCollection = db.collection("oylar");
-    console.log("MongoDB bağlantısı başarılı.");
-  } catch (err) {
-    console.error("Veritabanı bağlantı hatası:", err);
-  }
-}
-
-app.post("/vote", async (req, res) => {
-  const { code, tshirtColor, tshirtModel, pantColor } = req.body;
-
-  if (!code || !tshirtColor || !tshirtModel || !pantColor) {
-    return res.status(400).json({ error: "Eksik bilgi" });
-  }
-
-  try {
-    const kod = await codesCollection.findOne({ code });
-    if (!kod) {
-      return res.status(404).json({ error: "Kod bulunamadı" });
+    const codes = db.collection("codes");
+    const valid = await codes.findOne({ code: code, used: false });
+    if (valid) {
+      res.status(200).json({ valid: true });
+    } else {
+      res.status(400).json({ valid: false });
     }
-    if (kod.used) {
-      return res.status(403).json({ error: "Kod zaten kullanıldı" });
-    }
-
-    await oylarCollection.insertOne({ code, tshirtColor, tshirtModel, pantColor });
-    await codesCollection.updateOne({ code }, { $set: { used: true } });
-
-    res.status(200).json({ message: "Oy kaydedildi" });
-  } catch (err) {
-    console.error(err);
+  } catch (e) {
+    console.error(e);
     res.status(500).json({ error: "Sunucu hatası" });
   }
 });
 
-app.get("/results", async (req, res) => {
+app.post('/api/oyla', async (req, res) => {
+  const { code, tshirt, pants } = req.body;
   try {
-    const results = await oylarCollection.find().toArray();
-    res.json(results);
-  } catch (err) {
-    res.status(500).json({ error: "Sonuç alınamadı" });
+    await client.connect();
+    const db = client.db("anketDB");
+    const codes = db.collection("codes");
+    const oylar = db.collection("oylar");
+
+    const isValid = await codes.findOne({ code: code, used: false });
+    if (!isValid) {
+      return res.status(400).json({ message: "Kod geçersiz veya kullanılmış." });
+    }
+
+    await oylar.insertOne({ code, tshirt, pants, date: new Date() });
+    await codes.updateOne({ code }, { $set: { used: true } });
+
+    res.status(200).json({ message: "Oy başarıyla kaydedildi" });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: "Sunucu hatası" });
   }
 });
 
-connectToDB().then(() => {
-  app.listen(port, () => {
-    console.log(`Sunucu ${port} portunda çalışıyor.`);
-  });
+app.get('/api/sonuclar', async (req, res) => {
+  try {
+    await client.connect();
+    const db = client.db("anketDB");
+    const oylar = db.collection("oylar");
+    const veriler = await oylar.find().toArray();
+    res.status(200).json(veriler);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Sonuçlar alınamadı" });
+  }
+});
+
+app.listen(3000, () => {
+  console.log("Sunucu 3000 portunda çalışıyor");
 });
